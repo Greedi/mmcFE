@@ -1,0 +1,90 @@
+
+// Edited for Litecoin Pools
+
+// This file is a work in progress and may not be complete and/or additional steps may need to be taken. 
+
+Credits
+-------
+mmcFE is inspired by Simplecoin and borrow(ed)(s) greedily from that original code base. It is the intention
+of this project to clean up the the original Simplecoin code and over time, completely re-write portions 
+of it.
+
+
+(The original Simplecoin project is maintained by Mike Allison <dj.mikeallison@gmail.com>) and can easily be
+found with a quick search online. 
+
+
+INSTALL
+-------
+
+Deps:
+	- curl
+	- litecoind
+	- pushpool
+	- mysql
+	- php
+	- php5-cli
+
+Layout and Configuration:
+	You should have the following directories with this package. 
+
+	cronjobs/  
+	scripts/  
+	sql/  
+	www/
+
+	- grep for $includeDirectory in all of these directories and make sure you edit this value. 
+	
+	- In cronjobs/ you will find the meat of the code which is the front-end engine.  Check out
+	  the readme in that directory and make sure you set up site specific vars in all scripts in 
+	  this directory. 
+
+	- In sql/ is the database schema which you will need to import into your mysql database. 
+
+	- In www/includes/ pay attention to universalCheckLogin.php and requiredFunctions.php which 
+	  will need tweaked to your needs.
+
+	- 'www/includes/templates/' is where you will find the basic static content templates so you can edit
+	  the content of the site.  
+
+	- scripts/ contains some debugging utilities.  You can ignore them. 
+
+
+Important Extras:
+	It's also important to configure some rewrite rules for apache or the code will not work in its current form (linking
+	will be broken). 
+
+	        RewriteEngine on
+	        RewriteCond %{REQUEST_FILENAME} !-d
+	        RewriteCond %{REQUEST_FILENAME}\.php -f
+	        RewriteRule ^(.*)$ $1.php
+
+	This simply allows all .php files to be called without their extension.  You can enable this via an .htaccess file or 
+	simply edit the appropriate config file for apache. 
+
+Security:
+	For security reasons,  its also not a bad idea to disable direct access to the includes/ directory.  This can also be 
+	done via an .htaccess file or in the web server configuration itself.  With apache this would be done like so:
+
+        <Directory /sites/mmc/www/includes/>
+                Order allow,deny
+                deny from all
+        </Directory>
+
+
+
+__________________________________________
+To install, you will have to:
+* Import install.sql
+* Create a user for the database
+* Set permissions for the user
+* Set pool_update.sh to run at regular intervals (not absolutely required, but a good idea)
+* Set some settings in www/includes/requiredFunctions.php
+
+Graphs in statsAuth.php may not work unless you have PHP 5.3 (not 5.4).
+It might work on 5.2, but I have not tested that.
+
+NOTE: I didn't realize that if you have the rewrite module loaded in your webserver, and the .htaccess is used, you shouldn't have any issue running this. Since I didn't know that, a number of files had the .php added.
+If the current code does not work, then use the git reset command to go back to the Initial Upload commit.
+
+NOTE: For *nix users, remember to run /scripts/linux-tune.sh
